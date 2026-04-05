@@ -1,0 +1,83 @@
+media:
+  input: public/uploads
+  output: /uploads
+
+content:
+  - name: posts
+    label: 文章
+    type: collection
+    path: src/content/posts
+    filename: "{year}-{month}-{day}-{primary}.md"
+    format: yaml-frontmatter
+    fields:
+      - name: title
+        label: 标题
+        type: string
+        required: true
+      - name: description
+        label: 摘要
+        type: text
+        required: true
+      - name: pubDate
+        label: 发布日期
+        type: date
+        required: true
+      - name: updatedDate
+        label: 更新日期
+        type: date
+      - name: section
+        label: 栏目
+        type: select
+        required: true
+        options:
+          values:
+            - value: kaoyan
+              label: 考研日记
+            - value: chip-design
+              label: 开发心得
+            - value: life
+              label: 日常琐事
+      - name: tags
+        label: 标签
+        type: select
+        options:
+          multiple: true
+          creatable: true
+          values:
+            - value: 学习记录
+              label: 学习记录
+            - value: 2027考研
+              label: 2027考研
+            - value: 数学一
+              label: 数学一
+            - value: 英语一
+              label: 英语一
+            - value: 408
+              label: 408
+            - value: 数字设计
+              label: 数字设计
+            - value: 芯片学习
+              label: 芯片学习
+            - value: FPGA
+              label: FPGA
+            - value: 日常记录
+              label: 日常记录
+            - value: 心情
+              label: 心情
+      - name: featured
+        label: 首页推荐
+        type: boolean
+      - name: draft
+        label: 草稿
+        type: boolean
+      - name: cover
+        label: 封面图
+        type: image
+      - name: coverAlt
+        label: 封面图说明
+        type: string
+      - name: body
+        label: 正文
+        type: code
+        options:
+          language: markdown

@@ -1,0 +1,9 @@
+// @ts-check
+
+import sitemap from '@astrojs/sitemap';
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({
+	site: 'https://mengxi0413.github.io',
+	integrations: [sitemap()],
+});

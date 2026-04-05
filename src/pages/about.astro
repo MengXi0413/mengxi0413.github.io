@@ -1,0 +1,42 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+import { siteConfig } from '../config/site';
+---
+
+<MainLayout title={`关于 | ${siteConfig.title}`} description="关于这个博客和正在记录的内容。">
+	<section class="shell page-intro page-intro--narrow">
+		<p class="eyebrow">关于</p>
+		<h1>关于这个博客</h1>
+		<p class="page-intro__body">
+			这里会记录我备战 2027 软微考研的过程，也会写芯片设计相关的学习心得，偶尔停下来，
+			把生活里那些值得记住的片段留下来。
+		</p>
+	</section>
+
+	<section class="shell panel-grid section-block">
+		<article class="panel">
+			<h2>我会写什么</h2>
+			<ul class="plain-list">
+				<li>考研日记：每天的学习进度、状态波动和阶段总结</li>
+				<li>开发心得：数字芯片设计、FPGA、数字电路和工具链学习</li>
+				<li>日常琐事：普通生活里那些会被时间冲淡的小事</li>
+			</ul>
+		</article>
+		<article class="panel">
+			<h2>我为什么写</h2>
+			<ul class="plain-list">
+				<li>想把阶段性的努力留下完整的痕迹，而不是只记住结果</li>
+				<li>想把学习之外的普通日子，也认真地留一份备忘</li>
+				<li>希望以后回头看时，能看见一个更具体、更真实的自己</li>
+			</ul>
+		</article>
+	</section>
+
+	<section class="shell panel section-block">
+		<h2>写作原则</h2>
+		<p>
+			我希望这里不是“内容堆积区”，而是一个可以回头看的成长档案。它应该足够清晰，能分门别类地记录不同阶段的自己；
+			也应该足够温和，让我愿意把普通的一天认真写下来。
+		</p>
+	</section>
+</MainLayout>

@@ -1,0 +1,103 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+import PostCard from '../components/PostCard.astro';
+import SectionCard from '../components/SectionCard.astro';
+import { SECTIONS } from '../config/sections';
+import { siteConfig } from '../config/site';
+import { getAllTags, getPublishedPosts, getPostsBySection } from '../utils/content';
+
+const posts = await getPublishedPosts();
+const featuredPosts = posts.filter((post) => post.data.featured).slice(0, 3);
+const latestPosts = posts.slice(0, 4);
+const homePosts = featuredPosts.length > 0 ? featuredPosts : latestPosts.slice(0, 3);
+const tags = getAllTags(posts);
+const sectionSummaries = SECTIONS.map((section) => {
+	const sectionPosts = getPostsBySection(posts, section.slug);
+	return {
+		section,
+		count: sectionPosts.length,
+		latestPost: sectionPosts[0],
+	};
+});
+---
+
+<MainLayout title={siteConfig.title} description={siteConfig.description}>
+	<section class="shell hero">
+		<div class="hero__copy">
+			<p class="eyebrow">你好，欢迎来这里坐一会儿</p>
+			<h1>把学习、芯片和生活，都认真写给未来的自己。</h1>
+			<p class="hero__body">
+				这里是我的私人博客。我会在这里记录备战 2027 软微考研的过程、数字芯片设计的学习轨迹，
+				以及那些终究会被遗忘、但此刻仍值得留下的生活片段。
+			</p>
+			<div class="hero__actions">
+				<a class="button-link button-link--primary" href="/archive/">查看归档</a>
+				<a class="button-link button-link--ghost" href="/about/">了解这个博客</a>
+			</div>
+		</div>
+		<aside class="hero__panel">
+			<p class="hero__panel-label">这里会写</p>
+			<ul class="plain-list plain-list--compact">
+				<li>考研日记：记录每天的进度、状态和阶段性复盘</li>
+				<li>开发心得：整理数字芯片设计与相关学习笔记</li>
+				<li>日常琐事：留住一些平凡却不想忘记的时刻</li>
+			</ul>
+			<div class="hero__stats">
+				<div>
+					<strong>{posts.length}</strong>
+					<span>已创建文章</span>
+				</div>
+				<div>
+					<strong>{SECTIONS.length}</strong>
+					<span>核心栏目</span>
+				</div>
+				<div>
+					<strong>{tags.length}</strong>
+					<span>当前标签</span>
+				</div>
+			</div>
+		</aside>
+	</section>
+
+	<section class="shell section-block">
+		<div class="section-heading">
+			<div>
+				<p class="eyebrow">三个栏目</p>
+				<h2>先把内容分区，再把时间留下来</h2>
+			</div>
+			<a href="/archive/">查看全部文章</a>
+		</div>
+		<div class="section-grid">
+			{
+				sectionSummaries.map(({ section, count, latestPost }) => (
+					<SectionCard section={section} count={count} latestPost={latestPost} />
+				))
+			}
+		</div>
+	</section>
+
+	<section class="shell section-block">
+		<div class="section-heading">
+			<div>
+				<p class="eyebrow">推荐阅读</p>
+				<h2>首页展示</h2>
+			</div>
+		</div>
+		<div class="post-grid">
+			{homePosts.map((post) => <PostCard post={post} />)}
+		</div>
+	</section>
+
+	<section class="shell section-block">
+		<div class="section-heading">
+			<div>
+				<p class="eyebrow">最近更新</p>
+				<h2>最近更新</h2>
+			</div>
+			<a href="/archive/">继续翻看</a>
+		</div>
+		<div class="post-grid post-grid--dense">
+			{latestPosts.map((post) => <PostCard post={post} compact />)}
+		</div>
+	</section>
+</MainLayout>

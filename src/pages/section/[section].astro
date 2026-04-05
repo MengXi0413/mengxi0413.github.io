@@ -1,0 +1,47 @@
+---
+import MainLayout from '../../layouts/MainLayout.astro';
+import PostCard from '../../components/PostCard.astro';
+import { SECTIONS, type SectionSlug } from '../../config/sections';
+import { siteConfig } from '../../config/site';
+import { getPublishedPosts, getPostsBySection } from '../../utils/content';
+
+export async function getStaticPaths() {
+	const posts = await getPublishedPosts();
+
+	return SECTIONS.map((section) => ({
+		params: { section: section.slug },
+		props: {
+			section,
+			posts: getPostsBySection(posts, section.slug),
+		},
+	}));
+}
+
+type Props = {
+	section: (typeof SECTIONS)[number] & { slug: SectionSlug };
+	posts: Awaited<ReturnType<typeof getPublishedPosts>>;
+};
+
+const { section, posts } = Astro.props;
+---
+
+<MainLayout title={`${section.name} | ${siteConfig.title}`} description={section.description}>
+	<section class="shell page-intro">
+		<p class="eyebrow">{section.eyebrow}</p>
+		<h1>{section.name}</h1>
+		<p class="page-intro__body">{section.description}</p>
+	</section>
+
+	<section class="shell section-block">
+		<div class="section-heading">
+			<div>
+				<p class="eyebrow">栏目文章</p>
+				<h2>本栏目文章</h2>
+			</div>
+			<span>{posts.length} 篇</span>
+		</div>
+		<div class="post-grid">
+			{posts.map((post) => <PostCard post={post} />)}
+		</div>
+	</section>
+</MainLayout>

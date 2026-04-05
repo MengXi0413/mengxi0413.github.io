@@ -1,0 +1,38 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import type { SectionSlug } from '../config/sections';
+import { getSectionBySlug } from '../config/sections';
+
+interface Props {
+	section: {
+		slug: SectionSlug;
+		name: string;
+		eyebrow: string;
+		description: string;
+		mark: string;
+		color: string;
+	};
+	count: number;
+	latestPost?: CollectionEntry<'posts'>;
+}
+
+const { section, count, latestPost } = Astro.props;
+const meta = getSectionBySlug(section.slug);
+---
+
+<a class="section-card" href={`/section/${section.slug}/`} style={`--section-accent: ${meta.color};`}>
+	<span class="section-card__badge">{meta.mark}</span>
+	<p class="section-card__label">{meta.eyebrow}</p>
+	<h3>{meta.name}</h3>
+	<p>{meta.description}</p>
+	<div class="section-card__meta">
+		<p>{count} 篇文章</p>
+		{
+			latestPost && (
+				<p>
+					最近更新：<strong>{latestPost.data.title}</strong>
+				</p>
+			)
+		}
+	</div>
+</a>

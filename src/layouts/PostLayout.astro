@@ -1,0 +1,70 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { getSectionBySlug } from '../config/sections';
+import FormattedDate from '../components/FormattedDate.astro';
+import PostCard from '../components/PostCard.astro';
+import TagList from '../components/TagList.astro';
+import MainLayout from './MainLayout.astro';
+
+interface Props {
+	post: CollectionEntry<'posts'>;
+	relatedPosts?: CollectionEntry<'posts'>[];
+}
+
+const { post, relatedPosts = [] } = Astro.props;
+const section = getSectionBySlug(post.data.section);
+---
+
+<MainLayout title={post.data.title} description={post.data.description} image={post.data.cover}>
+	<section class="shell article-shell">
+		<aside class="article-aside">
+			<p class="eyebrow">{section.eyebrow}</p>
+			<h2>{section.name}</h2>
+			<p>{section.description}</p>
+			<hr />
+			<div class="article-meta">
+				<FormattedDate date={post.data.pubDate} />
+				{post.data.updatedDate && <span>更新于 <FormattedDate date={post.data.updatedDate} /></span>}
+			</div>
+			<TagList tags={post.data.tags} />
+		</aside>
+
+		<article class="article-content">
+			<header class="article-header">
+				<div class="article-meta">
+					<span class="section-pill">{section.name}</span>
+					<span>公开文章</span>
+				</div>
+				<h1>{post.data.title}</h1>
+				<p>{post.data.description}</p>
+				{
+					post.data.cover && (
+						<div class="article-cover">
+							<img src={post.data.cover} alt={post.data.coverAlt ?? post.data.title} />
+						</div>
+					)
+				}
+			</header>
+
+			<div class="prose">
+				<slot />
+			</div>
+		</article>
+	</section>
+
+	{
+		relatedPosts.length > 0 && (
+			<section class="shell related-posts section-block">
+				<div class="section-heading">
+					<div>
+						<p class="eyebrow">MORE FROM THIS SECTION</p>
+						<h2>继续阅读</h2>
+					</div>
+				</div>
+				<div class="post-grid post-grid--dense">
+					{relatedPosts.map((item) => <PostCard post={item} compact />)}
+				</div>
+			</section>
+		)
+	}
+</MainLayout>
