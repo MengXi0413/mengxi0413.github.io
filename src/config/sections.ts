@@ -9,10 +9,10 @@ export const SECTIONS = [
 	},
 	{
 		slug: 'chip-design',
-		name: '开发心得',
-		eyebrow: '芯片设计',
-		description: '围绕数字芯片设计、数字电路、FPGA 与工具链学习的心得整理。',
-		mark: '芯',
+		name: '学习心得',
+		eyebrow: '技术积累',
+		description: '围绕数字芯片设计，FPGA开发或其他的学习心得整理。',
+		mark: '学',
 		color: '#8cb7ab',
 	},
 	{

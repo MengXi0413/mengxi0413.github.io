@@ -23,9 +23,9 @@ type Props = {
 };
 
 const { post, relatedPosts } = Astro.props;
-const { Content } = await render(post);
+const { Content, headings } = await render(post);
 ---
 
-<PostLayout post={post} relatedPosts={relatedPosts}>
+<PostLayout post={post} relatedPosts={relatedPosts} headings={headings}>
 	<Content />
 </PostLayout>

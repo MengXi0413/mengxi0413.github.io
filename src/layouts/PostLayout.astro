@@ -6,27 +6,54 @@ import PostCard from '../components/PostCard.astro';
 import TagList from '../components/TagList.astro';
 import MainLayout from './MainLayout.astro';
 
+interface HeadingItem {
+	depth: number;
+	slug: string;
+	text: string;
+}
+
 interface Props {
 	post: CollectionEntry<'posts'>;
 	relatedPosts?: CollectionEntry<'posts'>[];
+	headings?: HeadingItem[];
 }
 
-const { post, relatedPosts = [] } = Astro.props;
+const { post, relatedPosts = [], headings = [] } = Astro.props;
 const section = getSectionBySlug(post.data.section);
+const tableOfContents = headings.filter((heading) => heading.depth >= 2 && heading.depth <= 3);
 ---
 
 <MainLayout title={post.data.title} description={post.data.description} image={post.data.cover}>
 	<section class="shell article-shell">
 		<aside class="article-aside">
-			<p class="eyebrow">{section.eyebrow}</p>
-			<h2>{section.name}</h2>
-			<p>{section.description}</p>
-			<hr />
-			<div class="article-meta">
-				<FormattedDate date={post.data.pubDate} />
-				{post.data.updatedDate && <span>更新于 <FormattedDate date={post.data.updatedDate} /></span>}
+			<div class="article-aside__section">
+				<p class="eyebrow">{section.eyebrow}</p>
+				<h2>{section.name}</h2>
+				<p>{section.description}</p>
+				<hr />
+				<div class="article-meta">
+					<FormattedDate date={post.data.pubDate} />
+					{post.data.updatedDate && <span>更新于 <FormattedDate date={post.data.updatedDate} /></span>}
+				</div>
+				<TagList tags={post.data.tags} />
 			</div>
-			<TagList tags={post.data.tags} />
+
+			{
+				tableOfContents.length > 0 && (
+					<div class="article-aside__section article-toc">
+						<p class="article-toc__label">目录</p>
+						<ul class="article-toc__list">
+							{
+								tableOfContents.map((heading) => (
+									<li class:list={['article-toc__item', heading.depth === 3 && 'is-nested']}>
+										<a href={`#${heading.slug}`}>{heading.text}</a>
+									</li>
+								))
+							}
+						</ul>
+					</div>
+				)
+			}
 		</aside>
 
 		<article class="article-content">
@@ -52,6 +79,10 @@ const section = getSectionBySlug(post.data.section);
 		</article>
 	</section>
 
+	<button class="back-to-top" type="button" aria-label="返回顶部">
+		<span aria-hidden="true">↑</span>
+	</button>
+
 	{
 		relatedPosts.length > 0 && (
 			<section class="shell related-posts section-block">
@@ -67,4 +98,55 @@ const section = getSectionBySlug(post.data.section);
 			</section>
 		)
 	}
+
+	<script is:inline>
+		const header = document.querySelector('.site-header');
+		const articleContent = document.querySelector('.article-content');
+		const backToTop = document.querySelector('.back-to-top');
+		const root = document.documentElement;
+		let ticking = false;
+
+		const syncReadingUI = () => {
+			if (!header || !articleContent) {
+				return;
+			}
+
+			const headerHeight = header.offsetHeight;
+			const headerGap = 16;
+			const contentTop = articleContent.getBoundingClientRect().top;
+			const contactLine = headerHeight + headerGap;
+			const overlap = Math.max(0, contactLine - contentTop);
+			const maxOffset = headerHeight + 18;
+			const translateY = -Math.min(maxOffset, overlap);
+
+			root.style.setProperty('--reading-header-offset', `${translateY}px`);
+
+			if (backToTop) {
+				backToTop.classList.toggle(
+					'is-visible',
+					overlap > maxOffset * 0.85 || window.scrollY > 520,
+				);
+			}
+		};
+
+		const onViewportChange = () => {
+			if (ticking) {
+				return;
+			}
+
+			ticking = true;
+			window.requestAnimationFrame(() => {
+				syncReadingUI();
+				ticking = false;
+			});
+		};
+
+		window.addEventListener('scroll', onViewportChange, { passive: true });
+		window.addEventListener('resize', onViewportChange);
+		syncReadingUI();
+
+		backToTop?.addEventListener('click', () => {
+			window.scrollTo({ top: 0, behavior: 'smooth' });
+		});
+	</script>
 </MainLayout>
